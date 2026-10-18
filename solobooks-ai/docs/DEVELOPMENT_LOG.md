@@ -1,0 +1,61 @@
+# SoloBooks AI — Development Log
+
+## Entry 1 — Workspace Setup & Architecture Foundation
+- **Date/Time:** 2026-10-18T20:15:00+05:30
+- **Implemented:**
+  - Initialized independent repository for Week 2: Side Hustle (`solobooks-ai`).
+  - Scaffolding Next.js 16 App Router with React 19, TypeScript strict mode, and Tailwind CSS v4.
+  - Installed and verified UI dependencies: `lucide-react`, `recharts`, `zod`, `clsx`, `tailwind-merge`.
+  - Installed and verified `@libsql/client` for native, crash-proof embedded SQLite operations.
+  - Installed `tesseract.js` (WASM OCR) and `pdf-parse` for local document text extraction.
+  - Installed `vitest` for automated testing.
+  - Verified local Ollama runner on port 11434 with `llama3:latest` installed.
+  - Created complete architectural documentation in `docs/`.
+
+---
+
+## Entry 2 — End-to-End Implementation, Testing & Verification
+- **Date/Time:** 2026-10-18T21:10:00+05:30
+- **Implemented:**
+  - Core Domain & Accounting Engine:
+    - Minor-unit integer arithmetic (`src/lib/currency.ts`) preventing floating-point rounding bugs.
+    - Embedded SQLite database repository (`src/lib/db.ts`) with tables: `documents`, `categories`, `expenses`, `invoices`, `settings`.
+    - Sample workspace seeder and one-click reset (`src/lib/seed.ts`).
+  - Local AI & OCR Service Layer:
+    - Agnostic `ModelAdapter` interface with `OllamaModelAdapter` (`src/lib/ai/adapter.ts`).
+    - Zod schema validation (`ExtractedLlmSchema`) ensuring anti-hallucination guarantees.
+    - Deterministic heuristic fallback extractor for offline mode.
+    - Prompt injection defenses (`src/lib/ai/prompts.ts`).
+    - Secure file validator and disk storage quaranine (`src/lib/document/parser.ts`).
+  - API Routes (13 endpoints):
+    - `/api/health`, `/api/metrics`, `/api/documents`, `/api/documents/[id]`, `/api/documents/[id]/file`
+    - `/api/expenses`, `/api/expenses/[id]`, `/api/invoices`, `/api/invoices/[id]`
+    - `/api/assistant`, `/api/reports/export`, `/api/settings`, `/api/sample-data`
+  - User Interface (8 Full Pages):
+    - Landing Page (`/`): Hero, preview, 3-step workflow, privacy comparison, hardware notes, side hustle pricing concept.
+    - Dashboard (`/dashboard`): Real-time metrics, cashflow bar chart, category pie chart, recent transactions, quick actions.
+    - Documents (`/documents`): Filterable document list, OCR badges, file preview, raw text inspector.
+    - Import & Review (`/import`): Drag-and-drop zone, OCR/PDF text parsing, local LLM extraction, editable review form with math inconsistency and duplicate detection.
+    - Expenses (`/expenses`): Full CRUD, filters, duplicate transaction warnings, deterministic totals, CSV export.
+    - Invoices (`/invoices`): Status tabs, mark-as-paid confirmation modal, printable invoice preview, overdue alerts.
+    - AI Financial Assistant (`/assistant`): Grounded SQL Q&A with prompt suggestions and supporting verified records cards.
+    - Reports & Exports (`/reports`): Income vs Expense summaries, category reports, RFC 4180 CSV / JSON downloads.
+    - Settings & Privacy (`/settings`): Live Ollama connection badge, dynamic model switching, default currency selector, workspace seed/reset.
+    - Navigation (`src/components/app-nav.tsx`) & Theme Provider (`src/components/theme-provider.tsx`): Persistent dark/light mode toggle with emerald aesthetic.
+- **Tests Executed:**
+  - `npm test` (Vitest):
+    - `tests/currency.test.ts` (4 passed)
+    - `tests/document-validation.test.ts` (4 passed)
+    - `tests/ai-adapter-mock.test.ts` (3 passed)
+    - `tests/db-accounting.test.ts` (5 passed)
+    - `tests/ai-real-model.test.ts` (1 passed — connected to local Ollama on port 11434 with `llama3:latest` and `codellama:latest`)
+    - **Total: 17 passed (17 tests)**
+  - `npm run build`: Compiled successfully with Next.js Turbopack, generating all 22 static and dynamic routes.
+  - Browser End-to-End Walkthrough via subagent:
+    - Verified Landing Page, Dashboard, Dark Mode, AI Assistant question answering with verified records, Invoices, Expenses, Documents, and Reports.
+    - Recorded walkthrough session: `solobooks_ui_walkthrough_1792336864936.webp`.
+- **Known Bugs:**
+  - None.
+- **Next Steps for Future Agents / Product Expansion:**
+  - Implement bank statement CSV schema auto-detection.
+  - Package native desktop build with Tauri for zero-command installation.
