@@ -219,7 +219,7 @@ export class OllamaModelAdapter implements ModelAdapter {
     try {
       const prompt = buildExtractionPrompt(text);
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 28000); // 28s timeout
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
       const res = await fetch(`${endpoint.replace(/\/+$/, '')}/api/generate`, {
         method: 'POST',
@@ -300,7 +300,7 @@ export class OllamaModelAdapter implements ModelAdapter {
     try {
       const prompt = buildAssistantPrompt(query, contextSummary);
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 25000);
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
 
       const res = await fetch(`${endpoint.replace(/\/+$/, '')}/api/generate`, {
         method: 'POST',
